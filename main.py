@@ -1,10 +1,7 @@
-import sys
-import libvirt
-from PyQt4 import QtGui, uic
+from PyQt4 import QtGui
 from mainwindow_ui import Ui_MainWindow
 from crearmaquinas_ui import Ui_Dialog1
 from conexiones_ui import Ui_Dialog
-import pprint
 
 
 class PopUpConectar(QtGui.QDialog):
@@ -35,12 +32,23 @@ class PopUpCrearMaquinas(QtGui.QDialog):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_Dialog1()
         self.ui.setupUi(self)
-        # self.setWindowTittle("KVM creacion de maquinas")
         self.ui.pushButton.clicked.connect(self.finalizar)
         self.ui.pushButton_2.clicked.connect(self.salir)
 
 
+
     def finalizar(self):
+        maquina_dict = {}
+        lista1= []
+        lista2= []
+        for child in self.findChildren(QtGui.QLineEdit):
+            lista1.append(str(child.text()))
+        for child in self.findChildren(QtGui.QLabel):
+            lista2.append(str(child.text()))
+        for i in range(len(lista1)):
+            maquina_dict[lista2[i]] = lista1[i]
+
+        #pasar al crear
         self.accept()
 
     def salir(self):
