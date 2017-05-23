@@ -2,6 +2,7 @@ from PyQt4 import QtGui
 from mainwindow_ui import Ui_MainWindow
 from crearmaquinas_ui import Ui_Dialog1
 from conexiones_ui import Ui_Dialog
+from yattag import Doc, indent
 
 
 class PopUpConectar(QtGui.QDialog):
@@ -34,6 +35,7 @@ class PopUpCrearMaquinas(QtGui.QDialog):
         self.ui.setupUi(self)
         self.ui.pushButton.clicked.connect(self.finalizar)
         self.ui.pushButton_2.clicked.connect(self.salir)
+
 
 
 
