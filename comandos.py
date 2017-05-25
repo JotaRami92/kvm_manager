@@ -6,6 +6,7 @@ def connect(self):
     connection = lib.open("qemu:///system")
 
 def createDomain(self, maquina_dict):
+    self.connect()
     xml = ""
     with open(maquina_dict.get('Name'), "r") as file:
         xml = file.read()

@@ -19,7 +19,6 @@ class PopUpConectar(QtGui.QDialog):
 
     def iniciarSesion(self):
 
-
         self.accept
 
     def ok(self):
