@@ -4,6 +4,7 @@ from conexiones_ui import Ui_Dialog
 from crearmaquinas_ui import Ui_Dialog1
 from mainwindow_ui import Ui_MainWindow
 import uuid as u
+import comandos as comandos
 
 
 class PopUpConectar(QtGui.QDialog):
@@ -70,8 +71,8 @@ class PopUpCrearMaquinas(QtGui.QDialog):
         interface = etree.SubElement(devices, "interface", type="network")
         source_nw = etree.SubElement(interface, "source", network="%s" % maquina_dict.get('network'))
         graphics = etree.SubElement(devices, "graphics", port="-1", type="vnc")
-        #pasar a fichero
-
+        tree = etree.ElementTree(domain)
+        tree.write('%s.xml' % maquina_dict.get('Name'), pretty_print=True, xml_declaration=True, encoding="utf-8")
 
     def finalizar(self):
         maquina_dict = {}
@@ -83,13 +84,8 @@ class PopUpCrearMaquinas(QtGui.QDialog):
             lista2.append(str(child.text()))
         for i in range(len(lista1)):
             maquina_dict[lista2[i]] = lista1[i]
-        for k, v in maquina_dict.items():
-            print k
-            print v
         self.generarxml(maquina_dict)
-
-
-        #pasar al crear
+        comandos.createDomain(maquina_dict)
         self.accept()
 
 
