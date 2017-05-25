@@ -4,8 +4,7 @@ from conexiones_ui import Ui_Dialog
 from crearmaquinas_ui import Ui_Dialog1
 from mainwindow_ui import Ui_MainWindow
 import uuid as u
-import comandos as comandos
-
+import comandos
 
 class PopUpConectar(QtGui.QDialog):
 
