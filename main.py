@@ -73,34 +73,128 @@ class MainUi(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        # self.setWindowTittle("KVM virtual machine manager")
         self.ui.pushButton_8.clicked.connect(self.conectar)
         self.ui.pushButton_7.clicked.connect(self.crearMaquina)
-
-
-
+	self.ui.pushButton_6.clicked.connect(self.apagarMaquina)
+	self.ui.pushButton_5.clicked.connect(self.iniciarMaquina)
+	self.ui.pushButton_4.clicked.connect(self.pausarMaquina)
+	self.ui.pushButton_3.clicked.connect(self.reanudarMaquina)
+	self.ui.pushButton_2.clicked.connect(self.reiniciarMaquina)
+	self.ui.pushButton_9.clicked.connect(self.borrarMaquina)
+	self.ui.pushButton.clicked.connect(self.mostrarMaquinas)
+	self.listView = QtGui.QListView()
+	self.listWidget = QtGui.QListWidget()
+	
 
     def conectar(self):
         global connection
         connection = lib.open("qemu:///system")
         self.ui.plainTextEdit.setPlainText("Conectado a " + connection.getHostname())
-        item = QListWidgetItem(str("Maquinas apagadas"))
-        self.ui.listWidget.addItem(item)
-        cont = 1
-        for names in connection.listDefinedDomains():
-            item=QListWidgetItem(str(names))
-            self.ui.listWidget.addItem(item)
-            self.dicA[names]=cont
-            cont=cont+1
-        item=QListWidgetItem(str(""))
-        self.ui.listWidget.addItem(item)
-        item=QListWidgetItem(str(""))
-        self.ui.listWidget.addItem(item)
+        
 
 
     def crearMaquina(self):
-        self.dialog = PopUpCrearMaquinas()
+	self.dialog = PopUpCrearMaquinas()
         self.dialog.exec_()
+
+
+
+    def iniciarMaquina(self):
+    	item=self.ui.listWidget.selectedItems()
+    	listView=str(item[0].text())
+    	vm=connection.lookupByName(listView)
+    	vm.create()
+    	print("Maquina ejecutandose.")
+	self.mostrarMaquinas()
+	self.ui.plainTextEdit.setPlainText("Maquina ejecutandose." )
+
+
+
+    def apagarMaquina(self):
+    	item=self.ui.listWidget.selectedItems()
+    	listView=str(item[0].text())
+    	vm=connection.lookupByName(listView)
+    	vm.destroy()
+    	print("Maquina parada.")
+	self.mostrarMaquinas()
+	self.ui.plainTextEdit.setPlainText("Maquina apagandose." )
+
+    def borrarMaquina(self):
+    	item=self.ui.listWidget.selectedItems()
+    	listView=str(item[0].text())
+    	vm=connection.lookupByName(listView)
+    	vm.undefine()
+    	print("Maquina eliminada.")
+	self.mostrarMaquinas()
+	
+
+    def pausarMaquina(self):
+    	item=self.ui.listWidget.selectedItems()
+    	listView=str(item[0].text())
+    	vm=connection.lookupByName(listView)
+    	vm.suspend()
+    	print("Maquina suspendida.")
+	self.mostrarMaquinas()
+	self.ui.plainTextEdit.setPlainText("Maquina suspendida" )
+
+
+    def reanudarMaquina(self):
+    	item=self.ui.listWidget.selectedItems()
+    	listView=str(item[0].text())
+    	vm=connection.lookupByName(listView)
+    	vm.destroy()
+	vm.create()
+    	print("Maquina suspendida.")
+	self.mostrarMaquinas()
+	self.ui.plainTextEdit.setPlainText("Maquina reanudada" )
+
+
+    def reiniciarMaquina(self):
+    	item=self.ui.listWidget.selectedItems()
+    	listView=str(item[0].text())
+    	vm=connection.lookupByName(listView)
+    	vm.reset()
+    	print("Maquina reiniciandose.")
+	self.mostrarMaquinas()
+	self.ui.plainTextEdit.setPlainText("Maquina reiniciandose" )
+
+
+
+    def mostrarMaquinas(self):
+	dicA={}
+	dicB={}
+	self.ui.listWidget.clear()
+	item = QListWidgetItem(str("Maquinas apagadas"))
+        self.ui.listWidget.addItem(item)
+        cont=1
+        for names in connection.listDefinedDomains():
+            item=QListWidgetItem(str(names))
+            self.ui.listWidget.addItem(item)
+            dicA[names]=cont
+            cont=cont+1
+
+        item=QListWidgetItem(str(""))
+        self.ui.listWidget.addItem(item)
+        item=QListWidgetItem(str(""))
+        self.ui.listWidget.addItem(item)
+
+	item=QListWidgetItem(str("Maquinas encendidas"))
+	self.ui.listWidget.addItem(item)
+	for identificador in connection.listDomainsID():
+	    vm=connection.lookupByID(identificador)
+	    info=vm.info()
+	    item=QListWidgetItem(str(vm.name()))
+	    self.ui.listWidget.addItem(item)
+	    dicB[identificador]=vm.name()
+	    diccionarioDatos={}
+	    diccionarioDatos['Name']=vm.name()
+	    diccionarioDatos['Estado']=info[0]
+	
+ 	    item=QListWidgetItem(str("Estado = %d" %info[0]))
+            self.ui.listWidget.addItem(item)
+	    item=QListWidgetItem(str("Memory = %d" %info[1]))
+            self.ui.listWidget.addItem(item)
+	
 
 
 if __name__ == '__main__':
